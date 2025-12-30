@@ -37,14 +37,13 @@ export default async function PastePage({ params }: Props) {
 
     // Handle view limits
     let currentViews = paste.remainingViews;
-    let shouldRender = true;
 
     if (typeof paste.remainingViews === 'number') {
         if (paste.remainingViews <= 0) {
             // Should be gone
             await Paste.deleteOne({ _id: paste._id });
             notFound();
-            return null; // TS satisfaction
+            return null;
         }
 
         const newViews = paste.remainingViews - 1;
@@ -62,7 +61,7 @@ export default async function PastePage({ params }: Props) {
         }
     }
 
-    // Convert mongoose doc to plain object if needed, but here simple property access is fine
+    // Convert mongoose doc properties
     const content = paste.content;
     const createdAt = paste.createdAt;
     const expiresAt = paste.expiresAt;
@@ -88,7 +87,6 @@ export default async function PastePage({ params }: Props) {
             </div>
 
             <div className="relative">
-                {/* Render text safely in a pre tag. React escapes children by default. */}
                 <pre className="w-full p-6 border rounded-lg bg-background overflow-x-auto font-mono text-sm leading-relaxed whitespace-pre-wrap">
                     {content}
                 </pre>

@@ -33,7 +33,6 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
         // Check expiration
         if (paste.expiresAt && now > paste.expiresAt) {
-            // Ideally delete it
             await Paste.deleteOne({ _id: paste._id });
             return NextResponse.json({ error: 'Not Found (Expired)' }, { status: 404 });
         }
@@ -49,7 +48,6 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
             if (newViews <= 0) {
                 // Burn it - return content then delete
-                // But we must return it first.
                 const content = paste.content;
                 const expires = paste.expiresAt;
 

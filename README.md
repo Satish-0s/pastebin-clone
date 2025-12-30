@@ -16,7 +16,7 @@ A modern, secure, and ephemeral pastebin application built with Next.js 15.
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Persistence**: MongoDB (via Mongoose).
-- **Deployment**: Optimized for Vercel/Railway/Render.
+- **Deployment**: Optimized for Vercel.
 
 ## Persistence Layer
 
@@ -48,10 +48,8 @@ We use **MongoDB** for storage.
     ```bash
     cp .env.example .env.local
     ```
-    Update `.env.local` with your MongoDB connection string:
-    ```env
-    MONGODB_URI="mongodb://localhost:27017/pastebin-lite"
-    ```
+    For local development, you don't need to change anything! It will use a local file.
+    For production, add your Upstash credentials.
 
 3.  **Run Development Server**
     ```bash

@@ -36,23 +36,21 @@ export async function POST(req: NextRequest) {
 
         const id = generateId();
         const now = Date.now();
-
-        // Calculate expiration
         let expiresAt: number | undefined = undefined;
         let expireDate: Date | undefined = undefined;
 
         if (body.ttl_seconds) {
-            expiresAt = now + body.ttl_seconds * 1000;
-            expireDate = new Date(expiresAt); // For MongoDB TTL if we index it later
+            expiresAt = now + (body.ttl_seconds * 1000);
+            expireDate = new Date(expiresAt);
         }
 
-        const paste = await Paste.create({
+        await Paste.create({
             id,
             content: body.content,
             createdAt: now,
-            expiresAt: expiresAt, // explicitly pass undefined if not set
-            expireDate: expireDate,
-            remainingViews: body.max_views ? body.max_views : undefined,
+            expiresAt,
+            expireDate,
+            remainingViews: body.max_views ?? undefined,
         });
 
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

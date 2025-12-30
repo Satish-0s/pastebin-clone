@@ -1,7 +1,7 @@
-import mongoose, { Schema, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export interface IPaste {
-    id: string; // The URL-friendly ID
+export interface IPaste extends Document {
+    id: string;
     content: string;
     createdAt: number;
     expiresAt?: number;
@@ -13,16 +13,14 @@ const PasteSchema = new Schema<IPaste>({
     id: { type: String, required: true, unique: true },
     content: { type: String, required: true },
     createdAt: { type: Number, required: true },
-    expiresAt: { type: Number },
+    expiresAt: { type: Number }, // Independent logic
+    expireDate: { type: Date }, // For MongoDB TTL
     remainingViews: { type: Number },
 });
 
-// Index for automatic expiration (TTL)
-// MongoDB TTL indexes work on Date objects usually, but we are using numeric timestamps.
-// However, since we store logic expiry in code, we can also use a real Date field for Mongo TTL if we wanted.
-// For now, to keep logic consistent with the previous Redis implementation, we will query based on timestamp.
-// BUT, to let Mongo auto-delete, let's add a proper Date field index.
-PasteSchema.add({ expireDate: { type: Date } });
+// Create a TTL index on expireDate
+// MongoDB will automatically remove documents where expireDate < now
+PasteSchema.index({ expireDate: 1 }, { expireAfterSeconds: 0 });
 
 const Paste: Model<IPaste> = mongoose.models.Paste || mongoose.model<IPaste>('Paste', PasteSchema);
 
