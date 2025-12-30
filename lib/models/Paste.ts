@@ -5,6 +5,7 @@ export interface IPaste {
     content: string;
     createdAt: number;
     expiresAt?: number;
+    expireDate?: Date;
     remainingViews?: number;
 }
 
