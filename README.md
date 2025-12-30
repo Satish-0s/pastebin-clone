@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pastebin App
 
-## Getting Started
+A modern, secure, and ephemeral pastebin application built with Next.js 15.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Create Pastes**: Securely store text snippets.
+- **Expiration (TTL)**: Set pastes to expire after a specific duration (1 minute to 1 week).
+- **Burn After Reading**: Set a maximum view limit (e.g., deleted after 1 view).
+- **Secure IDs**: Uses URL-friendly unique IDs.
+- **REST API**: Full programmatic access via API.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Persistence**: MongoDB (via Mongoose).
+- **Deployment**: Optimized for Vercel/Railway/Render.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Persistence Layer
 
-## Learn More
+We use **MongoDB** for storage.
+- **Config**: Configured in `.env.local` via `MONGODB_URI`.
+- **Data Model**: `lib/models/Paste.ts`
+  - Collection: `pastes`
+  - Fields: `id`, `content`, `createdAt`, `expiresAt`, `remainingViews`.
 
-To learn more about Next.js, take a look at the following resources:
+## Design Decisions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1.  **Persistence**: Switched to MongoDB for robust document storage.
+2.  **Burn Logic**: Implemented at the application level (API & Page logic).
+3.  **Security**: 
+    - Content served safe (via `<pre>` tag escaping) to prevent XSS.
+    - IDs are non-sequential.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How to Run Locally
 
-## Deploy on Vercel
+1.  **Clone & Install**
+    ```bash
+    git clone <repo>
+    cd pastebin-app
+    npm install
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2.  **Environment Setup**
+    Copy default env vars:
+    ```bash
+    cp .env.example .env.local
+    ```
+    Update `.env.local` with your MongoDB connection string:
+    ```env
+    MONGODB_URI="mongodb://localhost:27017/pastebin-lite"
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+    Open `http://localhost:3000` (or `3001` if 3000 is in use).
+
+## API Endpoints
+
+- `POST /api/pastes`: Create a paste.
+- `GET /api/pastes/:id`: Retrieve raw paste data (JSON).
+- `GET /api/healthz`: Health check.
